@@ -41,6 +41,9 @@ void setup()
   mpu.setInterruptPinLatch(true); // Keep it latched.  Will turn off when reinitialized.
   mpu.setInterruptPinPolarity(true);
   mpu.setMotionInterrupt(true);
+  mpu.setAccelerometerRange(MPU6050_RANGE_4_G);
+  mpu.setGyroRange(MPU6050_RANGE_250_DEG);
+  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
 
   Serial.println("");
   delay(100);
@@ -48,7 +51,6 @@ void setup()
 
 void loop()
 {
-
   /* Get new sensor events with the readings */
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
@@ -56,20 +58,40 @@ void loop()
   /* Print out the values */
   Serial.print(">AccelX:");
   Serial.println(a.acceleration.x);
- 
+
   Serial.print(">AccelY:");
   Serial.println(a.acceleration.y);
-  
+
   Serial.print(">AccelZ:");
   Serial.println(a.acceleration.z);
- 
+
   Serial.print(">GyroX:");
   Serial.println(g.gyro.x);
 
   Serial.print(">GyroY:");
   Serial.println(g.gyro.y);
- 
+
   Serial.print(">GyroZ:");
   Serial.println(g.gyro.z);
- 
+
+  Serial.print(">Temp: ");
+  Serial.println(temp.temperature);
+
+  float pitch = atan2(-a.acceleration.y, sqrt(a.acceleration.x * a.acceleration.x + a.acceleration.z * a.acceleration.z)) * 180 / PI;
+
+  float roll = atan2(-a.acceleration.x, sqrt(a.acceleration.y * a.acceleration.y + a.acceleration.z * a.acceleration.z)) * 180 / PI;
+
+  Serial.print(">Pitch: ");
+  Serial.println(pitch);
+  Serial.print(">Roll: ");
+  Serial.println(roll);
+
+  int ledR = map(a.acceleration.x, -10, 10, 0, 255);
+  int ledG = map(a.acceleration.y, -10, 10, 0, 255);
+  int ledB = map(a.acceleration.z, -10, 10, 0, 255);
+
+  led.setPixelColor(0, led.Color(ledR, ledG, ledB));
+  led.show();
+
+  delay(10);
 }
