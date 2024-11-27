@@ -1,6 +1,10 @@
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include <BLE2902.h>
 #include <Wire.h>
 
 #define ledPin 2
@@ -9,14 +13,9 @@
 Adafruit_NeoPixel led(ledCount, ledPin, NEO_GRB + NEO_KHZ800);
 Adafruit_MPU6050 mpu;
 
-void setup()
-{
-  Serial.begin(115200);
-  Wire.begin(7, 8);
+void mpuInit(){
 
-  led.begin();
-  led.setPixelColor(0, led.Color(100, 100, 200));
-  led.show();
+  Wire.begin(7, 8);
 
   while (!Serial)
     delay(10); // will pause Zero, Leonardo, etc until serial console opens
@@ -47,6 +46,16 @@ void setup()
 
   Serial.println("");
   delay(100);
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  mpuInit();
+
+  led.begin();
+  led.setPixelColor(0, led.Color(100, 100, 200));
+  led.show();
 }
 
 void loop()
